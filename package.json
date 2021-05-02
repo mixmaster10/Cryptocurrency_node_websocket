@@ -1,0 +1,35 @@
+{
+  "name": "ArbitrageMonitor",
+  "version": "1.4.0",
+  "description": "An arbitrage bot",
+  "main": "main.js",
+  "engines": {
+    "node": "16.0.0"
+  },
+  "dependencies": {
+    "bluebird": "^3.5.0",
+    "express": "^4.15.3",
+    "helmet": "^3.6.1",
+    "pm2": "^2.6.1",
+    "request": "^2.81.0",
+    "socket.io": "^2.0.3"
+  },
+  "scripts": {
+    "test": "node main",
+    "start": "node main"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "keywords": [
+    "bittrex",
+    "arbitrage"
+  ],
+  "author": "",
+  "license": "GNU",
+  "bugs": {
+    "url": ""
+  },
+  "homepage": ""
+}

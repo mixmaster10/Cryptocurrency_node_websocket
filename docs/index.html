@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Cryptocurrency Arbitrage</title>
+    <meta name="description"
+          content="A triangular arbitrage opportunity calculator for cryptocurrencies"/>
+    <meta name="Keywords"
+          content="arbitrage-opportunity, trading-bot, bitcoin, litecoin, cryptocurrency, altcoins, ethereum">
+<meta name="google-site-verification" content="mCmTVJjZWdqJhAclwP1_RNius8zq_g7ByWcUVD_AlKA" />
+
+    <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+    <link rel="manifest" href="img/manifest.json">
+    <link rel="mask-icon" href="img/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="img/favicon.ico">
+    <meta name="msapplication-config" content="images/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <style>
+        /* When the body has the loading class, we turn
+   the scrollbar off with overflow:hidden */
+        body {
+            overflow: auto;
+        }
+
+        .loader {
+            position: fixed;
+            left: 0px;
+            top: 0px;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            background: url('img/preloader.gif') 50% 50% no-repeat white;
+        }
+
+        .socket-loader {
+            width: 200px;
+            margin: auto;
+            height: 200px;
+            background: url('img/preloader2.gif') 50% 50% no-repeat white;
+
+        }
+    </style>
+
+    <link rel="stylesheet"  type="text/css"  href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css"   href="./css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/animate.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="fonts/cryptocoins.css">
+    <link rel="stylesheet" href="fonts/cryptocoins-colors.css">
+
+</head>
+
+<body>
+
+
+<div class="loader"></div>
+
+<section id="service">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="block-top">
+                    <div class="service-header">
+                        <h1 class="animation-box wow bounceIn animated">Calculadora de Arbitraje de criptomonedas</h1>
+                        <p class="animation-box wow bounceInDown">Los siguientes resultados se basan en datos sin procesar enviados por nodejs a través de websockets. Todos los datos se actualizan cada 10 segundos. Puede desactivar diferentes mercados y monedas desde el panel de la izquierda.
+                        </p>
+
+
+                        <div class="socket-loader"></div>
+
+                        <div class="best-pair wow animated fadeIn">
+
+
+                        </div>
+
+                    </div>
+                </div>
+            </div><!-- .col-md-12 close -->
+        </div><!-- row close -->
+        <div class="row">
+            <div class="col-md-12 b-bot">
+                <div class="block-bottom">
+                    <div class="service-tab ">
+                        <!-- Nav tabs -->
+                        <div class="left-panel col-md-4 col-xs-12  wow animated fadeInLeft">
+                            <div class="market-names-list col-md-12 col-xs-6">
+                                <h1 id="markets-title">Mercados: <input class="search" id="market-search"></h1>
+                                <ul class="badhon-tab " id="market-list" role="tablist">
+                                    <li class="active">
+                                        <a href="#" aria-controls="home" role="tab" data-toggle="tab">
+                                            <i class="fa fa-check-square-o"></i>Cargando...</a>
+                                    </li>
+                                </ul>
+                                <a class="remove-all" href="javascript:addRemoveAll('markets')">Check/Un-check all</a>
+                            </div>
+
+                            <div class="coin-names-list col-md-12 col-xs-6">
+                                <h1 id="coins-title">Monedas: <input class="search" id="coin-search"></h1>
+
+                                <ul id='coin-list' class="badhon-tab" role="tablist">
+                                    <li class="active">
+                                        <a href="#" aria-controls="home" role="tab" data-toggle="tab">
+                                            <i class="fa fa-check-square-o"></i>Cargando...</a>
+                                    </li>
+                                </ul>
+                                <a class="remove-all" href="javascript:addRemoveAll('coins')">Check/Un-check all</a>
+                            </div>
+                        </div>
+
+                        <!-- Tab panes -->
+                        <div class="tab-pane active edit-tab col-md-8 col-xs-12" id="home">
+                            <div class="app-pane">
+                                <h1>Diferencias de precio más altas + Pares</h1>
+                                <p></p>
+                                <p class="loadNumber"> Load top <input class="loadNumberInput" placeholder="5"> coins
+                                </p>
+                                <div class="socket-loader"></div>
+                                <ul id="highest"></ul>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div><!-- .col-md-12 close -->
+        </div><!-- row close -->
+    </div><!-- .container close -->
+</section><!-- #service close -->
+
+
+<script id="coin-list-template" type="text/x-handlebars-template">
+    <li class="active">
+        <a href="javascript:addRemoveCoin('{{coin}}')" aria-controls="home" role="tab" data-toggle="tab">
+            <i class="fa fa-check-square-o" id="check-{{coin}}"> </i> <span>{{coin}} </span> </a>
+    </li>
+</script>
+
+
+<script id="market-list-template" type="text/x-handlebars-template">
+    <li class="active">
+        <a href="javascript:addRemoveMarket('{{market}}')" aria-controls="home" role="tab" data-toggle="tab">
+            <i class="fa fa-check-square-o" id="check-{{market}}"></i> {{market}}</a>
+    </li>
+</script>
+
+<script id="high-template" type="text/x-handlebars-template">
+    <li class="coin-info-high " data-coin="{{coin}}" data-market1="{{market1}}" data-market2="{{market2}}">
+        <h1>Transfer <strong>{{coin}}</strong> from <strong><a href="{{coinlink1}}">{{market1}}</a></strong> to <strong><a href="{{coinlink2}}">{{market2}}</a></strong> para un beneficio de
+            <strong> {{diff}}%</strong></h1>
+        <div class="coin">
+            <i class="cc-{{coin}} {{coin}} cc"> </i>
+            <p class="coin-name">{{coin}}</p>
+            <p class="coin-prices wow animated fadeIn">{{diff}}%</p>
+            <p class="coin-markets">
+                <a>{{market1}}</a>: {{market1price}}<span class="mBTC">mBTC</span>
+                <i class="fa fa-long-arrow-right"></i>
+                <a>{{market2}}</a>: {{market2price}}<span class="mBTC">mBTC</span>
+            </p>
+        </div>
+        <a href="javascript:history('{{coin}}');">Ver Historico</a> <a class="remove" href="#!" onclick="remove(this, 'high')">
+        Borrar esta oportunidad</a>
+    </li>
+    <li class="coin-info-low" data-coin="{{pair.coin}}" data-market1="{{pair.market1}}" data-market2="{{pair-market2}}">
+        <h1>Vende <strong>{{pair.coin}}</strong> y transferir de nuevo a <strong><a href="{{coinlink1}}"> {{pair.market1}}
+            ({{pair.diff}}%)</a></strong>
+        </h1>
+        <div class="coin">
+            <i class="cc-{{pair.coin}} {{pair.coin}} cc"> </i>
+            <p class="coin-name">{{pair.coin}}</p>
+            <p class="coin-prices">{{pair.diff}}%</p>
+            <p class="coin-markets"><a>{{pair.market1}}</a>: {{pair.market2price}}<span class="mBTC">mBTC</span> <i
+                    class="fa fa-long-arrow-right"></i> <a>{{pair.market2}}</a>: {{pair.market1price}}<span
+                    class="mBTC">mBTC</span>
+            </p>
+        </div>
+        <a href="javascript:history({{pair.coin}}');">Ver Historico</a> <a class="remove" href="#!" onclick="remove(this, 'low')">Borrar esta oportunidad</a>
+    </li>
+</script>
+
+<script id="best-template" type="text/x-handlebars-template">
+
+    <h1 class="best-pair-title">Total profit: <strong>{{totalDiff}}%</strong></h1>
+    <div class="coin-info">
+        <div class="coin-info-high">
+            <h1>Transfiere <strong>{{coin}}</strong> de <strong>{{market1}}</strong> a
+                <strong>{{market2}}</strong><strong>
+                    ({{diff}}%)</strong>
+            </h1>
+            <div class="coin">
+                <i class="cc-{{coin}} {{coin}} cc"> </i>
+                <p class="coin-name">{{coin}}</p>
+                <p class="coin-prices">{{diff}}%</p>
+                <p class="coin-markets"><a>{{market1}}</a>: {{market1price}} <i class="fa fa-long-arrow-right"></i> <a>{{market2}}</a>:
+                    {{market2price}}
+                </p>
+            </div>
+        </div>
+        <div class="coin-info-low">
+            <h1>sell for <strong>{{pair.coin}}</strong> y transferir de nuevo a <strong> {{pair.market2}}
+                ({{pair.diff}}%)</strong>
+            </h1>
+            <div class="coin">
+                <i class="cc-{{pair.coin}} {{pair.coin}} cc"> </i>
+                <p class="coin-name">{{pair.coin}}
+                </p>
+                <p class="coin-prices">{{pair.diff}}%</p>
+                <p class="coin-markets"><a>{{pair.market1}}</a>: {{pair.market1price}} <i
+                        class="fa fa-long-arrow-right"></i> <a>{{pair.market2}}</a>: {{pair.market2price}}
+                </p>
+            </div>
+        </div>
+
+    </div>
+    <a href="javascript:history('{{coin}}', '{{pair.coin}}');">Ver Historico</a>
+</script>
+
+<section id="footer" class="wrapper">
+    <div class="container text-center">
+        <div class="copyright">
+            <div class="credits">
+                Made With <i class="fa fa-heart"></i> by scr1pt
+            </div>
+            <div>©201 Alejandro Díaz, All Rights Reserved</div>
+            <div>Donate LTC: LMVLtkgUjN2zZNSSxJpd9tbdMCdujYBRMw</div>
+            <div>Minimum deposit amount: 0.001 LTC. Any deposits less then the minimum will not be credited or refunded.</div>			
+        </div>
+    </div><!-- container -->
+</section>
+
+<script defer src="js/jquery-1.11.2.min.js"></script>
+<script defer src="js/handlebars.js"></script>
+<script defer src="js/wow.min.js"></script>
+<!--<script defer src="js/bootstrap.min.js"></script>-->
+<script defer src="js/socket.io.js"></script>
+<script defer src="js/script.js"></script>
+
+</body>
+</html>
